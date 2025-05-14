@@ -1,1 +1,20 @@
+#define BUZZER_PIN 23
 
+int contagem = 0; // variável para contar quantas vezes o buzzer tocou
+
+void setup() {
+  pinMode(BUZZER_PIN, OUTPUT);
+}
+
+void loop() {
+  if (contagem < 3) {
+    digitalWrite(BUZZER_PIN, HIGH);  // Liga o buzzer
+    delay(500);                      // Toca por 0.5 segundo
+    digitalWrite(BUZZER_PIN, LOW);   // Desliga o buzzer
+    delay(500);                      // Espera antes da próxima repetição
+    contagem++;                      // Incrementa a contagem
+  } else {
+    // Nada mais acontece, o loop fica parado
+    while (true); // trava o loop aqui
+  }
+}
