@@ -50,12 +50,9 @@ Este repositório contém os arquivos e códigos relacionados ao projeto integra
 - Renan dos Santos Ribeiro  
 - Tatyara Gonçalves Cardoso  
 - Yasmin Moreira do Nascimento  
-
 ---
 
 ## 📂 Organização do Repositório
-📁 /docs → Relatórios, artigos e diagramas
-📁 /hardware → Esquemas elétricos, layout de montagem
-📁 /software → Códigos-fonte para ESP32
-📁 /media → Imagens, vídeos e apresentações
+📁 [hardware](./hardware) → Esquemas elétricos, layout de montagem
+
 
