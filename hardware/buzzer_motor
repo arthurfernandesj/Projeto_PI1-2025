@@ -1,0 +1,32 @@
+#include <Arduino.h>
+
+void setup() {
+  pinMode(21, OUTPUT); // Buzzer
+  pinMode(23, OUTPUT); // Motor IN1
+  pinMode(22, OUTPUT); // Motor IN2
+}
+
+int contagem = 0;
+bool motorLigado = false;
+
+void loop() {
+  if (contagem < 3) {
+    digitalWrite(21, HIGH);  // Liga o buzzer
+    delay(500);
+    digitalWrite(21, LOW);   // Desliga o buzzer
+    delay(500);
+    contagem++;
+  } else if (!motorLigado) {
+    // Aciona o motor apenas uma vez após o buzzer
+    digitalWrite(23, LOW);   // IN1 = LOW
+    digitalWrite(22, HIGH);  // IN2 = HIGH (motor gira em um sentido)
+    delay(4000);             // Gira o motor por 4 segundos
+
+    // Desliga o motor depois do tempo
+    digitalWrite(23, LOW);
+    digitalWrite(22, LOW);
+
+    motorLigado = true; // marca que já ligou o motor
+  }
+  // Após isso, loop não faz mais nada
+}
