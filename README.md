@@ -54,5 +54,7 @@ Este repositório contém os arquivos e códigos relacionados ao projeto integra
 
 ## 📂 Organização do Repositório
 📁 [hardware](./hardware) → Esquemas elétricos, layout de montagem
+📄 [Relatório Final (PDF)](./docs/relatorio.pdf)
+
 
 
