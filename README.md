@@ -54,4 +54,8 @@ Este repositório contém os arquivos e códigos relacionados ao projeto integra
 ---
 
 ## 📂 Organização do Repositório
+📁 /docs → Relatórios, artigos e diagramas
+📁 /hardware → Esquemas elétricos, layout de montagem
+📁 /software → Códigos-fonte para ESP32
+📁 /media → Imagens, vídeos e apresentações
 
