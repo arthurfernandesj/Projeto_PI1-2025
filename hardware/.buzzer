@@ -18,3 +18,5 @@ void loop() {
     while (true); // trava o loop aqui
   }
 }
+
+//OBSERVACAO: no esquemático o lado positivo do buzzer deve estar conectado a porta 23 da esp32, e o lado negativo no GND da esp32
