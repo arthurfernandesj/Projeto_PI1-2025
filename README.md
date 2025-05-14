@@ -53,7 +53,7 @@ Este repositório contém os arquivos e códigos relacionados ao projeto integra
 ---
 
 ## 📂 Organização do Repositório
-📄 [Relatório Final (PDF)](./docs/Projeto_PI1_2025_1(3).pdf)  
+📄 [Relatório Final (PDF)](./docs/relatorio.pdf)  
 📁 [hardware](./hardware) → Esquemas elétricos, layout de montagem  
 
 
