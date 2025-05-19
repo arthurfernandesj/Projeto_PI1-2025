@@ -67,21 +67,23 @@ Este projeto está licenciado sob os termos do arquivo `LICENSE`.
 
 ---
 
-### Membros PI1 - 2025 | Universidade de Brasília (FGA)
+## :busts_in_silhouette: Equipe
 
-- Arthur Fernandes Silva de Jesus  
-- Bruno Cruz Garcia Rosa  
-- Camila Silva Cavalcante  
-- Eric Silveira Gomes  
-- Geovanna Alves Umbelino  
-- Gustavo Moreira Neris  
-- Isabella Mendes Choukaira  
-- Lucas Borges Branco  
-- Maria Clara Canuto Gontijo  
-- Milena Marques Simões de Oliveira  
-- Noemy da Luz Cardoso  
-- Octávio Silva Ribeiro Cunha  
-- Pedro Henrique Valeriano Carneiro  
-- Renan dos Santos Ribeiro  
-- Tatyara Gonçalves Cardoso  
-- Yasmin Moreira do Nascimento
+|    Função    | Nome                                 | LinkedIn | GitHub |
+| :----------: | :----------------------------------- | :------: | :----: |
+|   Dev Team   | Arthur Fernandes Silva de Jesus      |    -     |   -    |
+|   Dev Team   | Bruno Cruz Garcia Rosa               |    -     |   -    |
+|   Dev Team   | Camila Silva Cavalcante              |    -     |   -    |
+|   Dev Team   | Eric Silveira Gomes                  |    -     |   -    |
+|   Dev Team   | Geovanna Alves Umbelino              |    -     |   -    |
+|   Dev Team   | Gustavo Moreira Neris                |    -     |   -    |
+|   Dev Team   | Isabella Mendes Choukaira            |    -     |   -    |
+|   Dev Team   | Lucas Borges Branco                  |    -     |   -    |
+|   Dev Team   | Maria Clara Canuto Gontijo           |    -     |   -    |
+|   Dev Team   | Milena Marques Simões de Oliveira    |    -     |   -    |
+|   Dev Team   | Noemy da Luz Cardoso                 |    -     |   -    |
+|   Dev Team   | Octávio Silva Ribeiro Cunha          |    -     |   -    |
+|   Dev Team   | Pedro Henrique Valeriano Carneiro    |    -     |   -    |
+|   Dev Team   | Renan dos Santos Ribeiro             |    -     |   -    |
+|   Dev Team   | Tatyara Gonçalves Cardoso            |    -     |   -    |
+|   Dev Team   | Yasmin Moreira do Nascimento         |    -     |   -    |
