@@ -71,7 +71,7 @@ Este projeto está licenciado sob os termos do arquivo `LICENSE`.
 
 |    Função    | Nome                                 | LinkedIn | GitHub |
 | :----------: | :----------------------------------- | :------: | :----: |
-|   Dev Team   | Arthur Fernandes Silva de Jesus      |    -     |   -    |
+|   Dev Team   | Arthur Fernandes Silva de Jesus      |https://www.linkedin.com/in/arthur-fernandes-dev/ |  https://github.com/arthurfernandesj   |
 |   Dev Team   | Bruno Cruz Garcia Rosa               |    -     |   -    |
 |   Dev Team   | Camila Silva Cavalcante              |    -     |   -    |
 |   Dev Team   | Eric Silveira Gomes                  |    -     |   -    |
