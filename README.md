@@ -71,19 +71,20 @@ Este projeto está licenciado sob os termos do arquivo `LICENSE`.
 
 |    Função    | Nome                                 | LinkedIn | GitHub |
 | :----------: | :----------------------------------- | :------: | :----: |
-|   Dev Team   | Arthur Fernandes Silva de Jesus      |https://www.linkedin.com/in/arthur-fernandes-dev/ |  https://github.com/arthurfernandesj   |
-|   Dev Team   | Bruno Cruz Garcia Rosa               |    -     |   -    |
-|   Dev Team   | Camila Silva Cavalcante              |    -     |   -    |
-|   Dev Team   | Eric Silveira Gomes                  |    -     |   -    |
-|   Dev Team   | Geovanna Alves Umbelino              |    -     |   -    |
-|   Dev Team   | Gustavo Moreira Neris                |    -     |   -    |
-|   Dev Team   | Isabella Mendes Choukaira            |    -     |   -    |
-|   Dev Team   | Lucas Borges Branco                  |    -     |   -    |
-|   Dev Team   | Maria Clara Canuto Gontijo           |    -     |   -    |
-|   Dev Team   | Milena Marques Simões de Oliveira    |    -     |   -    |
-|   Dev Team   | Noemy da Luz Cardoso                 |    -     |   -    |
-|   Dev Team   | Octávio Silva Ribeiro Cunha          |    -     |   -    |
-|   Dev Team   | Pedro Henrique Valeriano Carneiro    |    -     |   -    |
-|   Dev Team   | Renan dos Santos Ribeiro             |    -     |   -    |
-|   Dev Team   | Tatyara Gonçalves Cardoso            |    -     |   -    |
-|   Dev Team   | Yasmin Moreira do Nascimento         |    -     |   -    |
+|   Geral      | Arthur Fernandes Silva de Jesus      | [LinkedIn](https://www.linkedin.com/in/arthur-fernandes-dev/) |[GitHub](https://github.com/arthurfernandesj) |
+|   Energia    | Bruno Cruz Garcia Rosa               |    -     |   -    |
+|   Software   | Camila Silva Cavalcante              |    -     |   -    |
+|   Software   | Eric Silveira Gomes                  |    -     |   -    |
+|   Software   | Geovanna Alves Umbelino              |    -     |   -    |
+| Estrutura    | Gustavo Moreira Neris                |    -     |   -    |
+| Eletrônica   | Isabella Mendes Choukaira            | [LinkedIn](https://www.linkedin.com/in/isabella-choukaira-21b109360) |[GitHub](https://github.com/isabellachoukaira) |
+| Software     | Lucas Borges Branco                  |    -     |   -    |
+| Eletrônica   | Maria Clara Canuto Gontijo           |    -     |   -    |
+| Eletrônica   | Milena Marques Simões de Oliveira    |    -     |   -    |
+|   Energia    | Noemy da Luz Cardoso                 |    -     |   -    |
+| Estrutura    | Octávio Silva Ribeiro Cunha          |    -     |   -    |
+| Estrutura    | Pedro Henrique Valeriano Carneiro    |    -     |   -    |
+| Software     | Renan dos Satos Ribeiro              |    -     |   -    |
+| Software     | Ricardo Augusto Valle Maciel         |    -     |   -    |
+| Estrutura    | Tatyara Gonçalves Cardoso            |    -     |   -    |
+| Eletrônica   | Yasmin Moreira do Nascimento         | [LinkedIn](https://www.linkedin.com/in/yasmin-nascimento-b82400352/) | [GitHub](https://github.com/Yasm1nNasc1mento) |
