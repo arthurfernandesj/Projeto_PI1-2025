@@ -34,7 +34,6 @@ class RocketTelemetry(Base):
     gyro_y = Column(Float, nullable=False)
     gyro_z = Column(Float, nullable=False)
     speed_mps = Column(Float, nullable=True)
-    temperature_celsius = Column(Float, nullable=True)
 
     launch = relationship("RocketLaunch", back_populates="telemetry")
 
@@ -50,9 +49,6 @@ class RocketTelemetryAnalysis(Base):
     avg_speed = Column(Float)
     max_speed = Column(Float)
     min_speed = Column(Float)
-    avg_temperature = Column(Float)
-    max_temperature = Column(Float)
-    min_temperature = Column(Float)
     total_duration_seconds = Column(Integer)
     recorded_points = Column(Integer)
 

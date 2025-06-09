@@ -8,6 +8,7 @@ function App() {
   const launchId = 1;
 
   const fetching = useRef(false);
+  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
   useEffect(() => {
     let isMounted = true;
@@ -18,11 +19,11 @@ function App() {
 
       try {
         const [telemetryRes, summaryRes] = await Promise.all([
-          fetch(`/api/telemetry/launch/${launchId}`),
-          fetch(`/api/telemetry/summary/${launchId}`),
+          fetch(`${API_URL}/api/telemetry/launch/${launchId}`),
+          fetch(`${API_URL}/api/telemetry/summary/${launchId}`),
         ]);
-        if (!isMounted) return;
 
+        if (!isMounted) return;
         if (!telemetryRes.ok || !summaryRes.ok) throw new Error("Fetch failed");
 
         const telemetryData = await telemetryRes.json();
@@ -51,7 +52,7 @@ function App() {
       isMounted = false;
       clearInterval(intervalId);
     };
-  }, [launchId]);
+  }, [launchId, API_URL]);
 
   if (loading) return <div style={{ padding: 20 }}>Carregando dados...</div>;
   if (!telemetry.length || !summary) return <div style={{ padding: 20 }}>Sem dados disponíveis</div>;
@@ -59,7 +60,6 @@ function App() {
   const timestamps = telemetry.map((d) => d.timestamp);
   const altitude = telemetry.map((d) => d.altitude_meters);
   const speed = telemetry.map((d) => d.speed_mps);
-  const temperature = telemetry.map((d) => d.temperature_celsius);
   const gyroX = telemetry.map((d) => d.gyro_x);
   const gyroY = telemetry.map((d) => d.gyro_y);
   const gyroZ = telemetry.map((d) => d.gyro_z);
@@ -137,20 +137,6 @@ function App() {
           },
         ]}
         layout={{ title: "Velocidade vs Tempo", height: 350 }}
-      />
-
-      <Plot
-        data={[
-          {
-            x: timestamps,
-            y: temperature,
-            type: "scatter",
-            mode: "lines",
-            marker: { color: "darkorange" },
-            name: "Temperatura (°C)",
-          },
-        ]}
-        layout={{ title: "Temperatura vs Tempo", height: 350 }}
       />
 
       <Plot

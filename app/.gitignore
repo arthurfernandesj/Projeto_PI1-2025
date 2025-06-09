@@ -4,13 +4,13 @@ __pycache__/
 *$py.class
 *.pyo
 *.pyd
-*.__pycache__
+*__pycache__
 
 # Environments
 env/
 venv/
 .env/
-.env
+*.venv
 
 
 # Editor files
@@ -35,7 +35,6 @@ dist/
 .eggs/
 
 # Docker
-*.env
 docker-compose.override.yml
 
 # Jupyter Notebook checkpoints

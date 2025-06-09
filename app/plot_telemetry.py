@@ -23,7 +23,7 @@ engine = create_engine(DATABASE_URL)
 
 def fetch_telemetry(launch_id):
     query = text("""
-        SELECT timestamp, latitude, longitude, altitude_meters, gyro_x, gyro_y, gyro_z, speed_mps, temperature_celsius
+        SELECT timestamp, latitude, longitude, altitude_meters, gyro_x, gyro_y, gyro_z, speed_mps
         FROM rocket_telemetry
         WHERE launch_id = :launch_id
         ORDER BY timestamp
@@ -39,7 +39,6 @@ def plot_telemetry(df):
         subplot_titles=(
             "Altitude vs Tempo",
             "Velocidade vs Tempo",
-            "Temperatura vs Tempo",
             "Giroscópio (X, Y, Z) vs Tempo",
             "Trajetória GPS (Latitude x Longitude)",
             "Altitude com Marcadores"
@@ -60,11 +59,6 @@ def plot_telemetry(df):
     fig.add_trace(go.Scatter(x=df['timestamp'], y=df['speed_mps'],
                              mode='lines', name='Velocidade (m/s)',
                              line=dict(color='firebrick')), row=1, col=2)
-
-    # Temperatura vs Tempo
-    fig.add_trace(go.Scatter(x=df['timestamp'], y=df['temperature_celsius'],
-                             mode='lines', name='Temperatura (°C)',
-                             line=dict(color='darkorange')), row=2, col=1)
 
     # Giroscópio X,Y,Z vs Tempo
     fig.add_trace(go.Scatter(x=df['timestamp'], y=df['gyro_x'],

@@ -27,7 +27,6 @@ class Telemetry(BaseModel):
     gyro_y: float
     gyro_z: float
     speed_mps: float
-    temperature_celsius: float
 
 
 class Summary(BaseModel):
@@ -58,7 +57,6 @@ def generate_fake_data():
                 gyro_y=random.uniform(-0.05, 0.05),
                 gyro_z=random.uniform(-0.05, 0.05),
                 speed_mps=random.uniform(0, 3000),
-                temperature_celsius=random.uniform(-50, 40),
             )
         )
     max_altitude = max(t.altitude_meters for t in telemetry_data)

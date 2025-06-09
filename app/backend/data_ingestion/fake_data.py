@@ -30,7 +30,6 @@ def create_fake_telemetry(session, launch, points=100):
         gyro_y = uniform(-0.05, 0.05)
         gyro_z = uniform(-0.05, 0.05)
         speed_mps = uniform(0, 3000)
-        temperature_celsius = uniform(-50, 40)
 
         telemetry = models.RocketTelemetry(
             launch_id=launch.id,
@@ -41,8 +40,7 @@ def create_fake_telemetry(session, launch, points=100):
             gyro_x=gyro_x,
             gyro_y=gyro_y,
             gyro_z=gyro_z,
-            speed_mps=speed_mps,
-            temperature_celsius=temperature_celsius
+            speed_mps=speed_mps
         )
         session.add(telemetry)
     session.commit()
@@ -56,7 +54,6 @@ def create_fake_analysis(session, launch):
 
     altitudes = [t.altitude_meters for t in telemetry_data]
     speeds = [t.speed_mps for t in telemetry_data if t.speed_mps is not None]
-    temps = [t.temperature_celsius for t in telemetry_data if t.temperature_celsius is not None]
     times = [t.timestamp for t in telemetry_data]
 
     analysis = models.RocketTelemetryAnalysis(
@@ -67,9 +64,6 @@ def create_fake_analysis(session, launch):
         avg_speed=sum(speeds)/len(speeds) if speeds else None,
         max_speed=max(speeds) if speeds else None,
         min_speed=min(speeds) if speeds else None,
-        avg_temperature=sum(temps)/len(temps) if temps else None,
-        max_temperature=max(temps) if temps else None,
-        min_temperature=min(temps) if temps else None,
         total_duration_seconds=(max(times) - min(times)).seconds,
         recorded_points=len(telemetry_data)
     )

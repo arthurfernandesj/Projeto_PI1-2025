@@ -6,7 +6,7 @@ function RealTimeTelemetry() {
 
   useEffect(() => {
     const fetchData = () => {
-      fetch("http://localhost:8000/api/telemetry/launch/1")
+      fetch(`${API_BASE_URL}/api/telemetry/launch/1`)
         .then((res) => res.json())
         .then((data) => {
           setTelemetryData(data);
@@ -33,7 +33,6 @@ function RealTimeTelemetry() {
       <ul>
         <li>Altitude: {telemetryData.altitude}</li>
         <li>Velocidade: {telemetryData.speed}</li>
-        <li>Temperatura: {telemetryData.temperature}</li>
       </ul>
     </div>
   );
