@@ -5,14 +5,20 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-# Mantém mirror padrão para evitar erro DNS
+# Instala dependências do sistema
 RUN apt-get update && \
     apt-get install -y libpq-dev && \
     rm -rf /var/lib/apt/lists/*
 
+# Copia dependências e instala
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Copia o restante da aplicação
 COPY . .
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Garante permissão de execução do script
+RUN chmod +x ./start.sh
+
+# Usa o script como entrada
+CMD ["bash", "start.sh"]

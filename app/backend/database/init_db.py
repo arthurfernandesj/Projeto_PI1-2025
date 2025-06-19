@@ -1,5 +1,5 @@
-from models import Base
-from database import engine
+from database.models import Base
+from database.database import engine
 
 
 def init_db():
