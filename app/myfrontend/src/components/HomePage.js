@@ -9,14 +9,23 @@ function HomePage() {
   useEffect(() => {
     const fetchLaunches = async () => {
       try {
-        console.log("Fetching launches from:", `${API_URL}/api/launches`);
-        const response = await fetch(`${API_URL}/api/launches`);
+        const endpoint = `${API_URL}/api/telemetry/launchs/`;
+        console.log("Fetching launches from:", endpoint);
+        const response = await fetch(endpoint);
         console.log("Response status:", response.status);
+
         const data = await response.json();
         console.log("Received data:", data);
-        setLaunches(data);
+
+        if (Array.isArray(data)) {
+          setLaunches(data);
+        } else {
+          console.error("Esperado um array, recebido:", data);
+          setLaunches([]);
+        }
       } catch (error) {
-        console.error("Error fetching launches:", error);
+        console.error("Erro ao buscar lançamentos:", error);
+        setLaunches([]);
       }
     };
 
@@ -36,13 +45,15 @@ function HomePage() {
                 <Typography variant="h5" component="h2">
                   Lançamento #{launch.id}
                 </Typography>
-                <Typography color="textSecondary">
-                  Data: {new Date(launch.launch_date).toLocaleDateString()}
-                </Typography>
-                <Button 
-                  component={Link} 
+                {launch.timestamp && (
+                  <Typography color="textSecondary">
+                    Data: {new Date(launch.timestamp).toLocaleDateString()}
+                  </Typography>
+                )}
+                <Button
+                  component={Link}
                   to={`/launch/${launch.id}`}
-                  variant="contained" 
+                  variant="contained"
                   color="primary"
                   sx={{ mt: 2 }}
                 >

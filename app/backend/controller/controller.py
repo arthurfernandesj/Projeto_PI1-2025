@@ -18,3 +18,8 @@ def get_summary_by_launch(launch_id: int) -> Summary:
     if not summary:
         raise HTTPException(status_code=404, detail="Summary not found")
     return summary
+
+
+# controllers/telemetry_controller.py
+def get_all_telemetries() -> List[Telemetry]:
+    return telemetry_service.get_all_telemetries()

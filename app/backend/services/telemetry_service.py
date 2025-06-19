@@ -34,3 +34,13 @@ def get_summary_from_db(launch_id: int) -> Summary:
         return Summary.model_validate(result)
     finally:
         db.close()
+
+
+# services/telemetry_service.py
+def get_all_telemetries() -> List[Telemetry]:
+    db: Session = SessionLocal()
+    try:
+        results = db.query(RocketTelemetry).all()
+        return [Telemetry.model_validate(r) for r in results]
+    finally:
+        db.close()
