@@ -1,10 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from datetime import datetime, timedelta
+import random
 from api import routes
 
 app = FastAPI()
 
-# Habilita CORS para seu frontend (ex: React em localhost:3000)
+# Habilita CORS para seu frontend (assumindo localhost:3000)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000"],
