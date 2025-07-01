@@ -1,6 +1,7 @@
 import os
+import time
 import pandas as pd
-from datetime import datetime, timedelta
+from datetime import datetime
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
@@ -33,10 +34,14 @@ def sync_sequence(session: Session, table: str, sequence: str) -> None:
 
 def insert_full_telemetry(csv_path: str) -> None:
     # -----------------------------------------------------------------------
-    # 2.1 Carrega CSV e garante tipos nativos
+    # 2.1 Carrega CSV e garante tipos corretos
     # -----------------------------------------------------------------------
-    df = pd.read_csv(csv_path, sep="\t" if "\t" in open(csv_path).readline() else ",")
-    df = df.astype("float64").applymap(float)  # converte para float nativo
+    df = pd.read_csv(csv_path, parse_dates=["time"])
+
+    # Converte colunas numéricas (exceto 'time') para float
+    for col in df.columns:
+        if col != "time":
+            df[col] = pd.to_numeric(df[col], errors="coerce")
 
     base_time = datetime.now()
 
@@ -55,7 +60,7 @@ def insert_full_telemetry(csv_path: str) -> None:
         telemetry_rows = [
             {
                 "launch_id": launch_id,
-                "timestamp": base_time + timedelta(seconds=i),
+                "timestamp": pd.to_datetime(row["time"]),
                 "latitude": float(row["lat"]),
                 "longitude": float(row["lng"]),
                 "altitude_meters": float(row["alt"]),
@@ -64,7 +69,7 @@ def insert_full_telemetry(csv_path: str) -> None:
                 "gyro_z": float(row["gz"]),
                 "speed_mps": float(row["vel"]),
             }
-            for i, row in df.iterrows()
+            for _, row in df.iterrows()
         ]
         session.bulk_insert_mappings(RocketTelemetry, telemetry_rows)
 
@@ -79,7 +84,7 @@ def insert_full_telemetry(csv_path: str) -> None:
             avg_speed=float(df["vel"].mean()),
             max_speed=float(df["vel"].max()),
             min_speed=float(df["vel"].min()),
-            total_duration_seconds=len(df) - 1,
+            total_duration_seconds=(df["time"].iloc[-1] - df["time"].iloc[0]).total_seconds(),
             recorded_points=len(df),
         )
         session.add(analysis)
@@ -96,8 +101,19 @@ def insert_full_telemetry(csv_path: str) -> None:
 
 
 if __name__ == "__main__":
-    CURRENT_DIR = os.path.dirname(__file__)
-    CSV_PATH = os.path.join(CURRENT_DIR, "dados_gps.csv")
+    print("[INFO] Iniciando watcher de telemetria...")
+    while True:
+        CURRENT_DIR = os.path.dirname(__file__)
+        CSV_PATH = os.path.join(CURRENT_DIR, "dados_gps.csv")
+        if os.path.exists(CSV_PATH):
+            try:
+                print(f"[INFO] CSV encontrado. Processando: {CSV_PATH}")
+                insert_full_telemetry(CSV_PATH)
+                os.remove(CSV_PATH)
+                print("[INFO] Arquivo processado e removido com sucesso.")
+            except Exception as e:
+                print(f"[ERRO] Falha ao processar {CSV_PATH}: {e}")
+        else:
+            print("[INFO] Nenhum CSV encontrado. Aguardando...")
 
-    print(f"[INFO] Inserindo dados de: {CSV_PATH}")
-    insert_full_telemetry(CSV_PATH)
+        time.sleep(3)
