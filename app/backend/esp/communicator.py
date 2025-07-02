@@ -116,4 +116,4 @@ if __name__ == "__main__":
         else:
             print("[INFO] Nenhum CSV encontrado. Aguardando...")
 
-        time.sleep(3)
+        time.sleep(1)
