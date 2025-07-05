@@ -29,6 +29,10 @@ def get_all_launches():
     return telemetry_service.get_all_launches()
 
 
+def get_launches_paginated(page: int, page_size: int):
+    return telemetry_service.get_launches_paginated(page, page_size)
+
+
 def get_summary():
     return telemetry_service.get_summary_from_db(1)  # Default to launch 1
 

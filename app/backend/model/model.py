@@ -2,7 +2,7 @@
 
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 
 class Telemetry(BaseModel):
@@ -43,3 +43,11 @@ class Summary(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class LaunchesResponse(BaseModel):
+    launches: List[Launch]
+    total_count: int
+    page: int
+    page_size: int
+    total_pages: int

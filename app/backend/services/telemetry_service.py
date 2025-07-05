@@ -60,3 +60,45 @@ def get_all_launches():
         return launches
     finally:
         db.close()
+
+
+def get_launches_paginated(page: int, page_size: int):
+    from model.model import Launch, LaunchesResponse
+    import math
+    
+    db: Session = SessionLocal()
+    try:
+        # Contar total de lançamentos únicos
+        total_count = db.query(RocketTelemetry.launch_id).distinct().count()
+        
+        # Calcular offset
+        offset = (page - 1) * page_size
+        
+        # Buscar lançamentos com paginação
+        results = (
+            db.query(RocketTelemetry.launch_id)
+            .distinct()
+            .order_by(RocketTelemetry.launch_id.desc())  # Mais recentes primeiro
+            .offset(offset)
+            .limit(page_size)
+            .all()
+        )
+        
+        launches = []
+        for result in results:
+            launch_id = result[0]
+            launch_record = db.query(RocketTelemetry).filter(RocketTelemetry.launch_id == launch_id).first()
+            if launch_record:
+                launches.append(Launch(id=launch_id, launch_date=launch_record.timestamp))
+        
+        total_pages = math.ceil(total_count / page_size)
+        
+        return LaunchesResponse(
+            launches=launches,
+            total_count=total_count,
+            page=page,
+            page_size=page_size,
+            total_pages=total_pages
+        )
+    finally:
+        db.close()
