@@ -13,6 +13,10 @@ function LaunchDetails() {
   const fetching = useRef(false);
   const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
+  console.log("LaunchDetails - API_URL:", API_URL);
+  console.log("LaunchDetails - launchId:", launchId);
+  console.log("LaunchDetails - launchId type:", typeof launchId);
+
   useEffect(() => {
     let isMounted = true;
 
@@ -21,16 +25,26 @@ function LaunchDetails() {
       fetching.current = true;
 
       try {
+        console.log("Fetching data for launch:", launchId);
         const [telemetryRes, summaryRes] = await Promise.all([
           fetch(`${API_URL}/api/telemetry/launch/${launchId}`),
           fetch(`${API_URL}/api/telemetry/summary/${launchId}`),
         ]);
 
+        console.log("Telemetry response status:", telemetryRes.status);
+        console.log("Summary response status:", summaryRes.status);
+
         if (!isMounted) return;
-        if (!telemetryRes.ok || !summaryRes.ok) throw new Error("Fetch failed");
+        if (!telemetryRes.ok || !summaryRes.ok) {
+          console.error("API request failed - Telemetry status:", telemetryRes.status, "Summary status:", summaryRes.status);
+          throw new Error(`Fetch failed - Telemetry: ${telemetryRes.status}, Summary: ${summaryRes.status}`);
+        }
 
         const telemetryData = await telemetryRes.json();
         const summaryData = await summaryRes.json();
+
+        console.log("Telemetry data length:", telemetryData.length);
+        console.log("Summary data:", summaryData);
 
         setTelemetry(telemetryData);
         setSummary(summaryData);
@@ -38,6 +52,8 @@ function LaunchDetails() {
       } catch (error) {
         if (!isMounted) return;
         console.error("Erro ao buscar dados:", error);
+        console.error("Error details:", error.message);
+        console.error("Error stack:", error.stack);
         setTelemetry([]);
         setSummary(null);
         setLoading(false);
@@ -55,8 +71,21 @@ function LaunchDetails() {
     };
   }, [launchId, API_URL]);
 
+  console.log("Render check - loading:", loading);
+  console.log("Render check - telemetry.length:", telemetry.length);
+  console.log("Render check - summary:", summary);
+
   if (loading) return <div style={{ padding: 20 }}>Carregando dados...</div>;
-  if (!telemetry.length || !summary) return <div style={{ padding: 20 }}>Sem dados disponíveis</div>;
+  
+  if (!telemetry.length) {
+    console.log("No telemetry data available");
+    return <div style={{ padding: 20 }}>Sem dados de telemetria disponíveis</div>;
+  }
+  
+  if (!summary) {
+    console.log("No summary data available");
+    return <div style={{ padding: 20 }}>Sem dados de resumo disponíveis</div>;
+  }
 
   const timestamps = telemetry.map((d) => d.timestamp);
   const altitude = telemetry.map((d) => d.altitude_meters);

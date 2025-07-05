@@ -4,12 +4,12 @@ import { Link } from "react-router-dom";
 
 function HomePage() {
   const [launches, setLaunches] = useState([]);
-  const API_URL = "http://localhost:8000";
-
+  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
+  
   useEffect(() => {
     const fetchLaunches = async () => {
       try {
-        const endpoint = `${API_URL}/api/telemetry/launchs/`;
+        const endpoint = `${API_URL}/api/launches/`;
         console.log("Fetching launches from:", endpoint);
         const response = await fetch(endpoint);
         console.log("Response status:", response.status);
@@ -52,23 +52,22 @@ function HomePage() {
       </Box>
       <Typography variant="h3" component="h1" gutterBottom>
         Lançamentos de Foguetes
-      </Typography>
-      <Grid container spacing={3}>
+      </Typography>      <Grid container spacing={3}>
         {launches.map((launch) => (
-          <Grid item xs={12} sm={6} md={4} key={launch.launch_id}>
+          <Grid item xs={12} sm={6} md={4} key={launch.id}>
             <Card>
               <CardContent>
                 <Typography variant="h5" component="h2">
-                  Lançamento #{launch.launch_id}
+                  Lançamento #{launch.id}
                 </Typography>
-                {launch.timestamp && (
+                {launch.launch_date && (
                   <Typography color="textSecondary">
-                    Data: {new Date(launch.timestamp).toLocaleDateString()}
+                    Data: {new Date(launch.launch_date).toLocaleString('pt-BR')}
                   </Typography>
                 )}
                 <Button
                   component={Link}
-                  to={`/launch/${launch.launch_id}`}
+                  to={`/launch/${launch.id}`}
                   variant="contained"
                   color="primary"
                   sx={{ mt: 2 }}

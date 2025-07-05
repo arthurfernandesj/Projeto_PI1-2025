@@ -21,6 +21,14 @@ class Telemetry(BaseModel):
         from_attributes = True
 
 
+class Launch(BaseModel):
+    id: int
+    launch_date: datetime
+
+    class Config:
+        from_attributes = True
+
+
 class Summary(BaseModel):
     id: int
     launch_id: int

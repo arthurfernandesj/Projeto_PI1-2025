@@ -44,3 +44,19 @@ def get_all_telemetries() -> List[Telemetry]:
         return [Telemetry.model_validate(r) for r in results]
     finally:
         db.close()
+
+
+def get_all_launches():
+    from model.model import Launch
+    db: Session = SessionLocal()
+    try:
+        results = db.query(RocketTelemetry.launch_id).distinct().order_by(RocketTelemetry.launch_id).all()
+        launches = []
+        for result in results:
+            launch_id = result[0]
+            launch_record = db.query(RocketTelemetry).filter(RocketTelemetry.launch_id == launch_id).first()
+            if launch_record:
+                launches.append(Launch(id=launch_id, launch_date=launch_record.timestamp))
+        return launches
+    finally:
+        db.close()

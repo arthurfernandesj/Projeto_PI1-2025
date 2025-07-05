@@ -1,9 +1,14 @@
 from fastapi import HTTPException, APIRouter
 from typing import List
-from model.model import Telemetry, Summary
+from model.model import Telemetry, Summary, Launch
 from controller import controller
 
 router = APIRouter()
+
+
+@router.get("/api/launches/", response_model=List[Launch])
+async def get_launches():
+    return controller.get_all_launches()
 
 
 @router.get("/api/telemetry/launchs/", response_model=List[Telemetry])

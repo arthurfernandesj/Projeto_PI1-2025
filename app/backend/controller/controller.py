@@ -23,3 +23,16 @@ def get_summary_by_launch(launch_id: int) -> Summary:
 # controllers/telemetry_controller.py
 def get_all_telemetries() -> List[Telemetry]:
     return telemetry_service.get_all_telemetries()
+
+
+def get_all_launches():
+    return telemetry_service.get_all_launches()
+
+
+def get_summary():
+    return telemetry_service.get_summary_from_db(1)  # Default to launch 1
+
+
+def regenerate_data():
+    # Implementar lógica de regeneração se necessário
+    return {"message": "Data regenerated successfully"}
