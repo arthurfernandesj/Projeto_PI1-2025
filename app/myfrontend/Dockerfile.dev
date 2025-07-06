@@ -5,6 +5,11 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
+# Fix corrupted dotenv package.json if it exists
+RUN if [ -f node_modules/dotenv/package.json ] && [ ! -s node_modules/dotenv/package.json ]; then \
+    echo '{"name":"dotenv","version":"16.4.7","description":"Loads environment variables from .env file","main":"lib/main.js","types":"lib/main.d.ts","exports":{".":{"types":"./lib/main.d.ts","require":"./lib/main.js","default":"./lib/main.js"},"./config":{"types":"./lib/main.d.ts","require":"./lib/main.js","default":"./lib/main.js"},"./package.json":"./package.json"},"scripts":{"test":"tap tests/*.js --100 -Rspec","test:coverage":"tap --coverage-report=lcov"},"repository":{"type":"git","url":"git://github.com/motdotla/dotenv.git"},"keywords":["dotenv","env",".env","environment","variables","config","settings"],"readmeFilename":"README.md","license":"BSD-2-Clause","devDependencies":{"@definitelytyped/dtslint":"^0.0.112","@types/node":"^18.11.3","decache":"^4.6.1","sinon":"^14.0.1","tap":"^16.3.0"},"engines":{"node":">=12"},"browser":{"fs":false}}' > node_modules/dotenv/package.json; \
+    fi
+
 COPY . .
 
 # Exponha a porta do dev server
