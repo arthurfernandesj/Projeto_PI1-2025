@@ -5,7 +5,9 @@ charset-normalizer==3.4.2
 click==8.2.1
 fastapi==0.115.12
 h11==0.16.0
+httpx==0.28.1
 idna==3.10
+pandas==2.3.1
 pydantic==2.11.5
 pydantic_core==2.33.2
 pyserial==3.5

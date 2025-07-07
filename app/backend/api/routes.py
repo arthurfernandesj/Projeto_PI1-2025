@@ -2,6 +2,7 @@ from fastapi import HTTPException, APIRouter, Query
 from typing import List
 from model.model import Telemetry, Summary, Launch, LaunchesResponse
 from controller import controller
+import httpx
 
 router = APIRouter()
 
@@ -13,6 +14,23 @@ async def get_launches(
 ):
     return controller.get_launches_paginated(page, page_size)
 
+@router.get("/api/data/load", response_model=Summary)
+async def load_csv_data():
+    async with httpx.AsyncClient(timeout=5.0) as client:
+        try:
+            resp = await client.get("http://192.168.4.1/parar")
+            resp.raise_for_status()
+        except httpx.RequestError as e:
+            raise HTTPException(502, f"Erro ao falar com a ESP: {e}")
+        except httpx.HTTPStatusError as e:
+            raise HTTPException(e.response.status_code, f"ESP retornou erro: {e.response.text}")
+        
+        try:
+            summary = controller.load_data("../esp/dados_wifi.csv")
+        except Exception as e:
+            raise HTTPException(500, f"Falha ao carregar dados: {e}")
+    
+        return summary
 
 @router.get("/api/telemetry/launchs/", response_model=List[Telemetry])
 async def get_telemetry_list():
@@ -38,7 +56,6 @@ async def get_summary_by_launch(launch_id: int):
     if not summary:
         raise HTTPException(status_code=404, detail="Summary not found")
     return summary
-
 
 @router.post("/api/telemetry/regenerate")
 async def regenerate():

@@ -10,6 +10,17 @@ function HomePage() {
   const [loading, setLoading] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
   const pageSize = 9;
+
+  const handleStop = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/data/load`);
+      if (!res.ok) throw new Error(await res.text());
+      const summary = await res.json();
+      console.log("Resumo recebido:", summary);
+    } catch (err) {
+      console.error("Erro ao parar e carregar dados:", err);
+    }
+  };
   
   useEffect(() => {
     const fetchLaunches = async () => {
@@ -60,7 +71,7 @@ function HomePage() {
         <Button
           variant="contained"
           color="error"
-          onClick={() => fetch("http://192.168.4.1/parar").catch(console.error)}
+          onClick={handleStop}
         >
           Parar
         </Button>
