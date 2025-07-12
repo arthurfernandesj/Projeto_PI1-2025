@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Card, CardContent, Grid, Typography, Button, Container, Pagination, Stack } from "@mui/material";
+import { Box, Card, CardContent, Grid, Typography, Button, Container, Pagination, Stack, Paper } from "@mui/material";
 import { Link } from "react-router-dom";
 
 function HomePage() {
@@ -8,6 +8,7 @@ function HomePage() {
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [statistics, setStatistics] = useState(null);
   const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
   const pageSize = 9;
 
@@ -20,9 +21,7 @@ function HomePage() {
     } catch (err) {
       console.error("Erro ao parar e carregar dados:", err);
     }
-  };
-  
-  useEffect(() => {
+  };  useEffect(() => {
     const fetchLaunches = async () => {
       setLoading(true);
       try {
@@ -50,12 +49,32 @@ function HomePage() {
       }
     };
 
-    fetchLaunches();
-  }, [API_URL, currentPage]);
+    const fetchStatistics = async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/statistics/general`);
+        if (response.ok) {
+          const data = await response.json();
+          setStatistics(data);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar estatísticas:", error);
+      }
+    };
 
-  const handlePageChange = (event, value) => {
+    fetchLaunches();
+    fetchStatistics();
+  }, [API_URL, currentPage]);  const handlePageChange = (event, value) => {
     setCurrentPage(value);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const infoBoxStyle = {
+    background: "#f0f4f8",
+    padding: "20px 25px",
+    borderRadius: 8,
+    textAlign: "center",
+    boxShadow: "0 1px 5px rgba(0,0,0,0.1)",
+    minWidth: 150,
   };
 
   return (
@@ -75,9 +94,35 @@ function HomePage() {
         >
           Parar
         </Button>
-      </Box>      <Typography variant="h3" component="h1" gutterBottom>
+      </Box>
+
+      <Typography variant="h3" component="h1" gutterBottom>
         Lançamentos de Foguetes
       </Typography>
+
+      {/* Estatísticas Gerais */}
+      {statistics && (
+        <Grid container spacing={3} sx={{ mb: 4 }}>
+          <Grid item xs={12} md={4}>
+            <Paper sx={infoBoxStyle}>
+              <Typography variant="h6">Altitude Média</Typography>
+              <Typography variant="h4">{statistics.average_altitude}m</Typography>
+            </Paper>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Paper sx={infoBoxStyle}>
+              <Typography variant="h6">Velocidade Média</Typography>
+              <Typography variant="h4">{statistics.average_speed}m/s</Typography>
+            </Paper>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Paper sx={infoBoxStyle}>
+              <Typography variant="h6">Duração Média</Typography>
+              <Typography variant="h4">{statistics.average_duration}s</Typography>
+            </Paper>
+          </Grid>
+        </Grid>
+      )}
       
       {totalCount > 0 && (
         <Typography variant="body1" color="textSecondary" sx={{ mb: 3 }}>

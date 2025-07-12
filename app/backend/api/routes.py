@@ -60,3 +60,8 @@ async def get_summary_by_launch(launch_id: int):
 @router.post("/api/telemetry/regenerate")
 async def regenerate():
     return controller.regenerate_data()
+
+
+@router.get("/api/statistics/general")
+async def get_general_statistics():
+    return controller.get_general_statistics()

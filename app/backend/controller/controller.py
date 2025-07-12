@@ -42,3 +42,7 @@ def get_summary():
 def regenerate_data():
     # Implementar lógica de regeneração se necessário
     return {"message": "Data regenerated successfully"}
+
+
+def get_general_statistics():
+    return telemetry_service.get_general_statistics()

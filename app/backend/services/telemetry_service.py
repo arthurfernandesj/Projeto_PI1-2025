@@ -102,3 +102,36 @@ def get_launches_paginated(page: int, page_size: int):
         )
     finally:
         db.close()
+
+
+def get_general_statistics():
+    """Retorna estatísticas gerais de todos os lançamentos"""
+    from sqlalchemy import func
+    
+    db: Session = SessionLocal()
+    try:
+        # Buscar todas as análises de lançamentos
+        analyses = db.query(RocketTelemetryAnalysis).all()
+        
+        if not analyses:
+            return {
+                "average_altitude": 0.0,
+                "average_speed": 0.0,
+                "average_duration": 0.0,
+                "total_launches": 0
+            }
+        
+        # Calcular médias
+        total_launches = len(analyses)
+        avg_altitude = sum(analysis.max_altitude for analysis in analyses) / total_launches
+        avg_speed = sum(analysis.max_speed for analysis in analyses) / total_launches
+        avg_duration = sum(analysis.total_duration_seconds for analysis in analyses) / total_launches
+        
+        return {
+            "average_altitude": round(avg_altitude, 1),
+            "average_speed": round(avg_speed, 1),
+            "average_duration": round(avg_duration, 1),
+            "total_launches": total_launches
+        }
+    finally:
+        db.close()

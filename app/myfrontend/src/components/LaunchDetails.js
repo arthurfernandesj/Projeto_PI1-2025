@@ -85,16 +85,43 @@ function LaunchDetails() {
   if (!summary) {
     console.log("No summary data available");
     return <div style={{ padding: 20 }}>Sem dados de resumo disponíveis</div>;
-  }
-
-  const timestamps = telemetry.map((d) => d.timestamp);
+  }  const timestamps = telemetry.map((d) => d.timestamp);
   const altitude = telemetry.map((d) => d.altitude_meters);
   const speed = telemetry.map((d) => d.speed_mps);
-  const gyroX = telemetry.map((d) => d.gyro_x);
-  const gyroY = telemetry.map((d) => d.gyro_y);
-  const gyroZ = telemetry.map((d) => d.gyro_z);
   const latitude = telemetry.map((d) => d.latitude);
   const longitude = telemetry.map((d) => d.longitude);
+
+  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371000; //raio terra
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+              Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+  };
+
+  const distances = [0]; //primeira distância é 0??
+  for (let i = 1; i < telemetry.length; i++) {
+    const segmentDistance = calculateDistance(
+      latitude[i-1], longitude[i-1],
+      latitude[i], longitude[i]
+    );
+    distances.push(distances[i-1] + segmentDistance);
+  }
+
+  //calculo aceleração
+  const acceleration = [0]; //primeira aceleração é 0??
+  for (let i = 1; i < telemetry.length; i++) {
+    const deltaSpeed = speed[i] - speed[i-1];
+    const deltaTime = (new Date(timestamps[i]) - new Date(timestamps[i-1])) / 1000; //em segundos
+    if (deltaTime > 0) {
+      acceleration.push(deltaSpeed / deltaTime);
+    } else {
+      acceleration.push(0);
+    }
+  }
 
   const infoBoxStyle = {
     background: "#f0f4f8",
@@ -123,23 +150,21 @@ function LaunchDetails() {
               <Typography variant="h6">Altitude Máxima</Typography>
               <Typography variant="h4">{summary?.max_altitude?.toFixed(1)}m</Typography>
             </Paper>
-          </Grid>
-          <Grid item xs={12} md={3}>
+          </Grid>          <Grid item xs={12} md={3}>
             <Paper sx={infoBoxStyle}>
-              <Typography variant="h6">Velocidade Máxima</Typography>
-              <Typography variant="h4">{summary?.max_speed?.toFixed(1)}m/s</Typography>
+              <Typography variant="h6">Distância Percorrida</Typography>
+              <Typography variant="h4">{distances[distances.length - 1]?.toFixed(1)}m</Typography>
             </Paper>
-          </Grid>
-          <Grid item xs={12} md={3}>
+          </Grid>          <Grid item xs={12} md={3}>
             <Paper sx={infoBoxStyle}>
               <Typography variant="h6">Duração</Typography>
-              <Typography variant="h4">{summary?.duration}s</Typography>
+              <Typography variant="h4">{summary?.total_duration_seconds}s</Typography>
             </Paper>
           </Grid>
           <Grid item xs={12} md={3}>
             <Paper sx={infoBoxStyle}>
-              <Typography variant="h6">Status</Typography>
-              <Typography variant="h4">{summary?.status}</Typography>
+              <Typography variant="h6">Número de pontos registrados</Typography>
+              <Typography variant="h4">{summary?.recorded_points}</Typography>
             </Paper>
           </Grid>
         </Grid>
@@ -185,36 +210,41 @@ function LaunchDetails() {
               }}
               style={{ width: "100%" }}
             />
+          </Grid>          <Grid item xs={12} md={6}>
+            <Plot
+              data={[
+                {
+                  x: distances,
+                  y: altitude,
+                  type: "scatter",
+                  mode: "lines",
+                  name: "Altitude",
+                },
+              ]}
+              layout={{
+                title: "Altitude vs Distância",
+                xaxis: { title: "Distância (m)" },
+                yaxis: { title: "Altitude (m)" },
+                height: 400,
+              }}
+              style={{ width: "100%" }}
+            />
           </Grid>
           <Grid item xs={12} md={6}>
             <Plot
               data={[
                 {
                   x: timestamps,
-                  y: gyroX,
+                  y: acceleration,
                   type: "scatter",
                   mode: "lines",
-                  name: "X",
-                },
-                {
-                  x: timestamps,
-                  y: gyroY,
-                  type: "scatter",
-                  mode: "lines",
-                  name: "Y",
-                },
-                {
-                  x: timestamps,
-                  y: gyroZ,
-                  type: "scatter",
-                  mode: "lines",
-                  name: "Z",
+                  name: "Aceleração",
                 },
               ]}
               layout={{
-                title: "Giroscópio vs Tempo",
+                title: "Aceleração vs Tempo",
                 xaxis: { title: "Tempo" },
-                yaxis: { title: "Ângulo (graus)" },
+                yaxis: { title: "Aceleração (m/s²)" },
                 height: 400,
               }}
               style={{ width: "100%" }}
