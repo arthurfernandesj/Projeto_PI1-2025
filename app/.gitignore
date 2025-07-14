@@ -56,3 +56,6 @@ htmlcov/
 # Other files
 *.bak
 *.tmp
+
+# Arquivo CSV
+dados_wifi.csv

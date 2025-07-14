@@ -10,7 +10,7 @@ ESP_CONNECTION = os.getenv("ESP_URL")
 
 url = f"{ESP_CONNECTION}/dados"
 
-with open('dados_wifi.csv', 'w', newline='') as csvfile:
+with open('./backend/esp/dados_wifi.csv', 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerow(['lat', 'lng', 'alt', 'vel', 'gx', 'gy', 'gz', 'ax', 'ay', 'az', 'time'])
 

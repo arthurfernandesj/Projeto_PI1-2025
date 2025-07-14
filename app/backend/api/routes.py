@@ -26,7 +26,7 @@ async def load_csv_data():
             raise HTTPException(e.response.status_code, f"ESP retornou erro: {e.response.text}")
         
         try:
-            summary = controller.load_data("../esp/dados_wifi.csv")
+            summary = controller.load_data("./esp/dados_wifi.csv")
         except Exception as e:
             raise HTTPException(500, f"Falha ao carregar dados: {e}")
     
