@@ -138,14 +138,14 @@ void setup() {
         coletaAtiva = true;
         server.send(200, "text/plain", "Coleta iniciada");
         Serial.println("Coleta iniciada remotamente.");
-    });
+    }).addHeader("Access-Control-Allow-Origin", "*");
 
     // Parar coleta
     server.on("/parar", []() {
         coletaAtiva = false;
         server.send(200, "text/plain", "Coleta parada");
         Serial.println("Coleta parada remotamente.");
-    });
+    }).addHeader("Access-Control-Allow-Origin", "*");
 
   server.begin();
   Serial.println("Servidor HTTP iniciado");
