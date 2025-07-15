@@ -109,9 +109,7 @@ function LaunchDetails() {
       latitude[i], longitude[i]
     );
     distances.push(distances[i-1] + segmentDistance);
-  }
-
-  //calculo aceleração
+  }  //calculo aceleração
   const acceleration = [0]; //primeira aceleração é 0??
   for (let i = 1; i < telemetry.length; i++) {
     const deltaSpeed = speed[i] - speed[i-1];
@@ -121,7 +119,22 @@ function LaunchDetails() {
     } else {
       acceleration.push(0);
     }
+  }  const accelerationBySecond = {};
+  const startTime = new Date(timestamps[0]);
+  
+  for (let i = 0; i < telemetry.length; i++) {
+    const currentTime = new Date(timestamps[i]);
+    const secondFromStart = Math.floor((currentTime - startTime) / 1000);
+    
+    if (!accelerationBySecond[secondFromStart] || Math.abs(acceleration[i]) > Math.abs(accelerationBySecond[secondFromStart])) {
+      accelerationBySecond[secondFromStart] = acceleration[i];
+    }
   }
+  
+  const secondsArray = Object.keys(accelerationBySecond).map(Number).sort((a, b) => a - b);
+  const maxAccelerationPerSecond = secondsArray.map(second => accelerationBySecond[second]);
+
+
 
   const infoBoxStyle = {
     background: "#f0f4f8",
@@ -229,21 +242,30 @@ function LaunchDetails() {
               }}
               style={{ width: "100%" }}
             />
-          </Grid>
-          <Grid item xs={12} md={6}>
+          </Grid>          <Grid item xs={12} md={6}>
             <Plot
               data={[
                 {
-                  x: timestamps,
-                  y: acceleration,
-                  type: "scatter",
-                  mode: "lines",
-                  name: "Aceleração",
+                  x: secondsArray,
+                  y: maxAccelerationPerSecond,
+                  type: "bar",
+                  name: "Aceleração Máxima",
+                  marker: {
+                    color: maxAccelerationPerSecond.map(acc => acc >= 0 ? 'rgba(55, 128, 191, 0.7)' : 'rgba(219, 64, 82, 0.7)'),
+                    line: {
+                      color: maxAccelerationPerSecond.map(acc => acc >= 0 ? 'rgba(55, 128, 191, 1.0)' : 'rgba(219, 64, 82, 1.0)'),
+                      width: 1
+                    }
+                  }
                 },
               ]}
               layout={{
-                title: "Aceleração vs Tempo",
-                xaxis: { title: "Tempo" },
+                title: "Aceleração Máxima por Segundo",
+                xaxis: { 
+                  title: "Tempo (segundos)",
+                  tickmode: 'linear',
+                  dtick: 1
+                },
                 yaxis: { title: "Aceleração (m/s²)" },
                 height: 400,
               }}
@@ -272,10 +294,10 @@ function LaunchDetails() {
                   zoom: 12,
                 },
                 height: 400,
-              }}
-              style={{ width: "100%" }}
+              }}              style={{ width: "100%" }}
             />
           </Grid>
+
         </Grid>
       </Box>
     </Container>
