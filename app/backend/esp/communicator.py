@@ -5,6 +5,7 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
+from model.model import Summary
 
 from database.database import SessionLocal
 from database.models import RocketLaunch, RocketTelemetry, RocketTelemetryAnalysis
@@ -13,8 +14,8 @@ from database.models import RocketLaunch, RocketTelemetry, RocketTelemetryAnalys
 try:
     engine_url = SessionLocal.kw["bind"].url.render_as_string(hide_password=False)
     if "postgres:5432" in engine_url:
-        print("[INFO] Redirecionando conexão para localhost:5432 para uso local.")
-        LOCAL_DB_URL = "postgresql+psycopg2://p1user:p1password@localhost:5432/analytics"
+        print("[INFO] Redirecionando conexão para postgres:5432 para uso local.")
+        LOCAL_DB_URL = "postgresql+psycopg2://p1user:p1password@postgres:5432/analytics"
         engine = create_engine(LOCAL_DB_URL, echo=True)
         SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 except Exception as e:
@@ -32,7 +33,7 @@ def sync_sequence(session: Session, table: str, sequence: str) -> None:
     """))
 
 
-def insert_full_telemetry(csv_path: str) -> None:
+def insert_full_telemetry(csv_path: str) -> Summary:
     # -----------------------------------------------------------------------
     # 2.1 Carrega CSV e garante tipos corretos
     # -----------------------------------------------------------------------
@@ -98,6 +99,21 @@ def insert_full_telemetry(csv_path: str) -> None:
         session.commit()
 
         print(f"[OK] Lançamento {launch_id} salvo com {len(df)} pontos de telemetria.")
+
+        os.remove(CSV_PATH)
+        print("[INFO] Arquivo processado e removido com sucesso.")
+
+        return Summary(
+        launch_id=launch_id,
+        avg_altitude=analysis.avg_altitude,
+        max_altitude=analysis.max_altitude,
+        min_altitude=analysis.min_altitude,
+        avg_speed=analysis.avg_speed,
+        max_speed=analysis.max_speed,
+        min_speed=analysis.min_speed,
+        total_duration_seconds=analysis.total_duration_seconds,
+        recorded_points=analysis.recorded_points,
+    )
 
 
 if __name__ == "__main__":

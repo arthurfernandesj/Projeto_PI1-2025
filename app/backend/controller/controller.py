@@ -24,7 +24,7 @@ def get_summary_by_launch(launch_id: int) -> Summary:
 def get_all_telemetries() -> List[Telemetry]:
     return telemetry_service.get_all_telemetries()
 
-def load_data(path: str) -> None:
+def load_data(path: str) -> Summary:
     return communicator.insert_full_telemetry(path)
 
 def get_all_launches():

@@ -16,21 +16,30 @@ async def get_launches(
 
 @router.get("/api/data/load", response_model=Summary)
 async def load_csv_data():
+    print("Iniciando requisição para ESP...")
+
     async with httpx.AsyncClient(timeout=5.0) as client:
         try:
             resp = await client.get("http://192.168.4.1/parar")
+            print(f"Resposta da ESP: {resp.status_code}")
             resp.raise_for_status()
         except httpx.RequestError as e:
+            print(f"Erro ao falar com a ESP: {e}")
             raise HTTPException(502, f"Erro ao falar com a ESP: {e}")
         except httpx.HTTPStatusError as e:
+            print(f"ESP retornou erro: {e.response.status_code}")
             raise HTTPException(e.response.status_code, f"ESP retornou erro: {e.response.text}")
         
         try:
+            print("Carregando dados do CSV...")
             summary = controller.load_data("./esp/dados_wifi.csv")
         except Exception as e:
+            print(f"Erro ao carregar CSV: {e}")
             raise HTTPException(500, f"Falha ao carregar dados: {e}")
     
+        print("Dados carregados com sucesso.")
         return summary
+
 
 @router.get("/api/telemetry/launchs/", response_model=List[Telemetry])
 async def get_telemetry_list():
