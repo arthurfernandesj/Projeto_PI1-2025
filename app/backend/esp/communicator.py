@@ -33,7 +33,17 @@ def sync_sequence(session: Session, table: str, sequence: str) -> None:
     """))
 
 
-def insert_full_telemetry(csv_path: str) -> None:
+def insert_full_telemetry(csv_path: str, *, delete_after: bool = False) -> Summary:
+    """Importa *csv_path* no banco de dados.
+
+    Args:
+        csv_path: Arquivo CSV recebido da ESP.
+        delete_after: Remove o arquivo após importar.
+
+    Returns:
+        Summary com métricas do lançamento.
+    """
+
     # -----------------------------------------------------------------------
     # 2.1 Carrega CSV e garante tipos corretos
     # -----------------------------------------------------------------------
@@ -98,7 +108,50 @@ def insert_full_telemetry(csv_path: str) -> None:
         sync_sequence(session, "rocket_telemetry_analysis", "rocket_telemetry_analysis_id_seq")
         session.commit()
 
-        print(f"[OK] Lançamento {launch_id} salvo com {len(df)} pontos de telemetria.")
+        print(
+            "[OK] Lançamento %s salvo com %d pontos de telemetria."
+            % (launch_id, len(df))
+        )
+
+        # Pós-processamento do arquivo
+        if delete_after:
+            # Remove o CSV do disco
+            try:
+                os.remove(csv_path)
+                print(f"[INFO] CSV {csv_path} removido após importação.")
+            except FileNotFoundError:
+                pass
+        else:
+            # Recria o arquivo vazio com cabeçalho para próxima coleta
+            header = [
+                "lat",
+                "lng",
+                "alt",
+                "vel",
+                "gx",
+                "gy",
+                "gz",
+                "ax",
+                "ay",
+                "az",
+                "time",
+            ]
+            with open(csv_path, "w", newline="", encoding="utf-8") as csvfile:
+                csvfile.write(",".join(header) + "\n")
+            print(f"[INFO] CSV {csv_path} reiniciado para próximo lançamento.")
+
+        return Summary(
+            id=analysis.id,
+            launch_id=launch_id,
+            avg_altitude=analysis.avg_altitude,
+            max_altitude=analysis.max_altitude,
+            min_altitude=analysis.min_altitude,
+            avg_speed=analysis.avg_speed,
+            max_speed=analysis.max_speed,
+            min_speed=analysis.min_speed,
+            total_duration_seconds=analysis.total_duration_seconds,
+            recorded_points=analysis.recorded_points,
+        )
 
 
 if __name__ == "__main__":

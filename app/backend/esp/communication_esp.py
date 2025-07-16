@@ -1,37 +1,67 @@
-import os
 import csv
+import os
 import time
+from pathlib import Path
+
 import requests
 from dotenv import load_dotenv
 
+
 load_dotenv()
 
+
 ESP_CONNECTION = os.getenv("ESP_URL")
+URL = f"{ESP_CONNECTION}/dados"
 
-url = f"{ESP_CONNECTION}/dados"
+# Caminho do CSV que será consumido pelo backend
+CSV_PATH = Path(__file__).parent / "dados_wifi.csv"
+HEADER = [
+    "lat",
+    "lng",
+    "alt",
+    "vel",
+    "gx",
+    "gy",
+    "gz",
+    "ax",
+    "ay",
+    "az",
+    "time",
+]
 
-with open('./backend/esp/dados_wifi.csv', 'w', newline='') as csvfile:
-    writer = csv.writer(csvfile)
-    writer.writerow(['lat', 'lng', 'alt', 'vel', 'gx', 'gy', 'gz', 'ax', 'ay', 'az', 'time'])
 
-    print("Conectado ao ESP32 via Wi-Fi. Coletando dados...")
-    try:
-        while True:
-            try:
-                response = requests.get(url, timeout=2)
-                linha = response.text.strip()
-                if linha.startswith("invalid"):
-                    print("Aguardando fix do GPS...")
-                    continue
-                valores = linha.split(',')
-                if len(valores) == 11:
-                    writer.writerow(valores)
-                    csvfile.flush()
-                    print("Salvo:", linha)
-                else:
-                    print("Linha inválida:", linha)
-            except Exception as e:
-                print("Erro de conexão:", e)
-            time.sleep(1)
-    except KeyboardInterrupt:
-        print("\nFinalizado pelo usuário.")
+def append_row(row_values):
+    """Abre o CSV em modo append e grava *row_values*.
+    Escreve o cabeçalho se o arquivo acabou de ser criado ou está vazio."""
+
+    need_header = not CSV_PATH.exists() or CSV_PATH.stat().st_size == 0
+    with CSV_PATH.open("a", newline="", encoding="utf-8") as csvfile:
+        writer = csv.writer(csvfile)
+        if need_header:
+            writer.writerow(HEADER)
+        writer.writerow(row_values)
+
+
+print("Conectado ao ESP32 via Wi-Fi. Coletando dados...")
+
+try:
+    while True:
+        try:
+            response = requests.get(URL, timeout=2)
+            linha = response.text.strip()
+            if linha.startswith("invalid"):
+                print("Aguardando fix do GPS...")
+                time.sleep(1)
+                continue
+
+            valores = linha.split(",")
+            if len(valores) == 11:
+                append_row(valores)
+                print("Salvo:", linha)
+            else:
+                print("Linha inválida:", linha)
+        except Exception as exc:
+            print("Erro de conexão:", exc)
+        time.sleep(1)
+except KeyboardInterrupt:
+    print("\nFinalizado pelo usuário.")

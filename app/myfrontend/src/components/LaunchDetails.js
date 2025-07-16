@@ -1,14 +1,14 @@
 import React, { useEffect, useState, useRef } from "react";
 import Plot from "react-plotly.js";
-import { useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { Container, Typography, Box, Button, Grid, Paper } from "@mui/material";
-import { Link } from "react-router-dom";
 
 function LaunchDetails() {
   const [telemetry, setTelemetry] = useState([]);
   const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(true);
   const { launchId } = useParams();
+  const navigate = useNavigate();
 
   const fetching = useRef(false);
   const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
@@ -74,6 +74,26 @@ function LaunchDetails() {
   console.log("Render check - loading:", loading);
   console.log("Render check - telemetry.length:", telemetry.length);
   console.log("Render check - summary:", summary);
+
+  const handleDelete = async () => {
+    if (!window.confirm("Tem certeza que deseja deletar este lançamento?")) {
+      return;
+    }
+    try {
+      const res = await fetch(`${API_URL}/api/launch/${launchId}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) {
+        const txt = await res.text();
+        throw new Error(txt);
+      }
+      // Deletou com sucesso, voltar à home
+      navigate("/");
+    } catch (err) {
+      // eslint-disable-next-line no-alert
+      alert(`Falha ao deletar: ${err}`);
+    }
+  };
 
   if (loading) return <div style={{ padding: 20 }}>Carregando dados...</div>;
   
@@ -152,9 +172,18 @@ function LaunchDetails() {
           Voltar para Home
         </Button>
 
-        <Typography variant="h4" component="h1" gutterBottom>
-          Lançamento #{launchId}
-        </Typography>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          <Typography variant="h4" component="h1" gutterBottom>
+            Lançamento #{launchId}
+          </Typography>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={handleDelete}
+          >
+            Deletar
+          </Button>
+        </Box>
 
         {/*infos*/}
         <Grid container spacing={3} sx={{ mb: 4 }}>

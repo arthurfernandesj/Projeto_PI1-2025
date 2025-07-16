@@ -12,7 +12,9 @@ def get_telemetries_from_db(launch_id: int) -> List[Telemetry]:
     try:
         results = (
             db.query(RocketTelemetry)
-            .filter(RocketTelemetry.launch_id == launch_id)
+            .filter(
+                RocketTelemetry.launch_id == launch_id,
+            )
             .order_by(RocketTelemetry.timestamp)
             .all()
         )
@@ -26,7 +28,9 @@ def get_summary_from_db(launch_id: int) -> Summary:
     try:
         result = (
             db.query(RocketTelemetryAnalysis)
-            .filter(RocketTelemetryAnalysis.launch_id == launch_id)
+            .filter(
+                RocketTelemetryAnalysis.launch_id == launch_id,
+            )
             .first()
         )
         if result is None:
@@ -50,13 +54,27 @@ def get_all_launches():
     from model.model import Launch
     db: Session = SessionLocal()
     try:
-        results = db.query(RocketTelemetry.launch_id).distinct().order_by(RocketTelemetry.launch_id).all()
+        results = (
+            db.query(RocketTelemetry.launch_id)
+            .distinct()
+            .order_by(RocketTelemetry.launch_id)
+            .all()
+        )
         launches = []
         for result in results:
             launch_id = result[0]
-            launch_record = db.query(RocketTelemetry).filter(RocketTelemetry.launch_id == launch_id).first()
+            launch_record = (
+                db.query(RocketTelemetry)
+                .filter(RocketTelemetry.launch_id == launch_id)
+                .first()
+            )
             if launch_record:
-                launches.append(Launch(id=launch_id, launch_date=launch_record.timestamp))
+                launches.append(
+                    Launch(
+                        id=launch_id,
+                        launch_date=launch_record.timestamp,
+                    )
+                )
         return launches
     finally:
         db.close()
@@ -78,7 +96,8 @@ def get_launches_paginated(page: int, page_size: int):
         results = (
             db.query(RocketTelemetry.launch_id)
             .distinct()
-            .order_by(RocketTelemetry.launch_id.desc())  # Mais recentes primeiro
+            # Mais recentes primeiro
+            .order_by(RocketTelemetry.launch_id.desc())
             .offset(offset)
             .limit(page_size)
             .all()
@@ -87,9 +106,18 @@ def get_launches_paginated(page: int, page_size: int):
         launches = []
         for result in results:
             launch_id = result[0]
-            launch_record = db.query(RocketTelemetry).filter(RocketTelemetry.launch_id == launch_id).first()
+            launch_record = (
+                db.query(RocketTelemetry)
+                .filter(RocketTelemetry.launch_id == launch_id)
+                .first()
+            )
             if launch_record:
-                launches.append(Launch(id=launch_id, launch_date=launch_record.timestamp))
+                launches.append(
+                    Launch(
+                        id=launch_id,
+                        launch_date=launch_record.timestamp,
+                    )
+                )
         
         total_pages = math.ceil(total_count / page_size)
         
@@ -106,7 +134,6 @@ def get_launches_paginated(page: int, page_size: int):
 
 def get_general_statistics():
     """Retorna estatísticas gerais de todos os lançamentos"""
-    from sqlalchemy import func
     
     db: Session = SessionLocal()
     try:
@@ -123,15 +150,64 @@ def get_general_statistics():
         
         # Calcular médias
         total_launches = len(analyses)
-        avg_altitude = sum(analysis.max_altitude for analysis in analyses) / total_launches
-        avg_speed = sum(analysis.max_speed for analysis in analyses) / total_launches
-        avg_duration = sum(analysis.total_duration_seconds for analysis in analyses) / total_launches
+        avg_altitude = sum(
+            analysis.max_altitude for analysis in analyses
+        ) / total_launches
+        avg_speed = sum(
+            analysis.max_speed for analysis in analyses
+        ) / total_launches
+        avg_duration = sum(
+            analysis.total_duration_seconds for analysis in analyses
+        ) / total_launches
         
         return {
             "average_altitude": round(avg_altitude, 1),
             "average_speed": round(avg_speed, 1),
             "average_duration": round(avg_duration, 1),
-            "total_launches": total_launches
+            "total_launches": total_launches,
         }
+    finally:
+        db.close()
+
+
+# ---------------------------------------------------------------------------
+# Delete launch and related data
+# ---------------------------------------------------------------------------
+
+
+def delete_launch(launch_id: int) -> None:
+    """Remove um lançamento e todos os registros relacionados."""
+    db: Session = SessionLocal()
+    try:
+        # Remover telemetria primeiro (tabela dependente)
+        (
+            db.query(RocketTelemetry)
+            .filter(
+                RocketTelemetry.launch_id == launch_id,
+            )
+            .delete(synchronize_session=False)
+        )
+
+        # Remover análise resumida
+        (
+            db.query(RocketTelemetryAnalysis)
+            .filter(
+                RocketTelemetryAnalysis.launch_id == launch_id,
+            )
+            .delete(synchronize_session=False)
+        )
+
+        # Por fim, remover registro de lançamento
+        from database.models import RocketLaunch
+
+        (
+            db.query(RocketLaunch)
+            .filter(
+                RocketLaunch.id == launch_id,
+            )
+            .delete(synchronize_session=False)
+        )
+
+        db.commit()
     finally:
         db.close()

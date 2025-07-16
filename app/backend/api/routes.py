@@ -1,6 +1,6 @@
 from fastapi import HTTPException, APIRouter, Query, status, Response
 from typing import List
-from model.model import Telemetry, Summary, Launch, LaunchesResponse
+from model.model import Telemetry, Summary, LaunchesResponse
 from controller import controller
 import httpx
 from pathlib import Path
@@ -11,11 +11,17 @@ router = APIRouter()
 @router.get("/api/launches/", response_model=LaunchesResponse)
 async def get_launches(
     page: int = Query(1, ge=1, description="Número da página"),
-    page_size: int = Query(9, ge=1, le=50, description="Itens por página")
+    page_size: int = Query(
+        9,
+        ge=1,
+        le=50,
+        description="Itens por página",
+    ),
 ):
     return controller.get_launches_paginated(page, page_size)
 
-@router.get("/api/data/load", status_code=status.HTTP_204_NO_CONTENT)
+
+@router.get("/api/data/load", response_model=Summary)
 async def load_csv_data():
     print("Iniciando requisição para ESP...")
 
@@ -29,11 +35,18 @@ async def load_csv_data():
             raise HTTPException(502, f"Erro ao falar com a ESP: {e}")
         except httpx.HTTPStatusError as e:
             print(f"ESP retornou erro: {e.response.status_code}")
-            raise HTTPException(e.response.status_code, f"ESP retornou erro: {e.response.text}")
+            raise HTTPException(
+                e.response.status_code,
+                f"ESP retornou erro: {e.response.text}",
+            )
         
         try:
+            from pathlib import Path
+
             print("Carregando dados do CSV...")
-            summary = controller.load_data("./esp/dados_wifi.csv")
+            base_dir = Path(__file__).resolve().parent.parent
+            csv_path = base_dir / "esp" / "dados_wifi.csv"
+            summary = controller.load_data(str(csv_path))
         except Exception as e:
             print(f"Erro ao carregar CSV: {e}")
             raise HTTPException(500, f"Falha ao carregar dados: {e}")
@@ -47,7 +60,10 @@ async def get_telemetry_list():
     return controller.get_all_telemetries()
 
 
-@router.get("/api/telemetry/launch/{launch_id}", response_model=List[Telemetry])
+@router.get(
+    "/api/telemetry/launch/{launch_id}",
+    response_model=List[Telemetry],
+)
 async def get_telemetry(launch_id: int):
     return controller.get_telemetry_by_launch(launch_id)
 
@@ -60,12 +76,16 @@ async def get_summary_default():
     return summary
 
 
-@router.get("/api/telemetry/summary/{launch_id}", response_model=Summary)
+@router.get(
+    "/api/telemetry/summary/{launch_id}",
+    response_model=Summary,
+)
 async def get_summary_by_launch(launch_id: int):
     summary = controller.get_summary_by_launch(launch_id)
     if not summary:
         raise HTTPException(status_code=404, detail="Summary not found")
     return summary
+
 
 @router.post("/api/telemetry/regenerate")
 async def regenerate():
@@ -75,3 +95,14 @@ async def regenerate():
 @router.get("/api/statistics/general")
 async def get_general_statistics():
     return controller.get_general_statistics()
+
+
+# ---------------------------------------------------------------------------
+# Delete launch
+# ---------------------------------------------------------------------------
+
+
+@router.delete("/api/launch/{launch_id}")
+async def delete_launch(launch_id: int):
+    controller.delete_launch(launch_id)
+    return {"message": f"Launch {launch_id} deleted"}

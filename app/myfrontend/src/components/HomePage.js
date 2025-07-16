@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Box, Card, CardContent, Grid, Typography, Button, Container, Pagination, Stack, Paper } from "@mui/material";
 import { Link } from "react-router-dom";
 
@@ -12,23 +12,17 @@ function HomePage() {
   const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
   const pageSize = 9;
 
-  const fetchLaunches = async () => {
+  const fetchLaunches = useCallback(async () => {
     setLoading(true);
     try {
       const endpoint = `${API_URL}/api/launches/?page=${currentPage}&page_size=${pageSize}`;
-      console.log("Fetching launches from:", endpoint);
       const response = await fetch(endpoint);
-      console.log("Response status:", response.status);
-
       const data = await response.json();
-      console.log("Received data:", data);
-
-      if (data && data.launches && Array.isArray(data.launches)) {
+      if (data && Array.isArray(data.launches)) {
         setLaunches(data.launches);
         setTotalPages(data.total_pages);
         setTotalCount(data.total_count);
       } else {
-        console.error("Formato de dados inesperado:", data);
         setLaunches([]);
       }
     } catch (error) {
@@ -37,9 +31,9 @@ function HomePage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [API_URL, currentPage, pageSize]);
 
-  const fetchStatistics = async () => {
+  const fetchStatistics = useCallback(async () => {
     try {
       const response = await fetch(`${API_URL}/api/statistics/general`);
       if (response.ok) {
@@ -49,28 +43,27 @@ function HomePage() {
     } catch (error) {
       console.error("Erro ao buscar estatísticas:", error);
     }
-  };
+  }, [API_URL]);
 
   const handleStop = async () => {
     try {
       const res = await fetch(`${API_URL}/api/data/load`);
       if (!res.ok) throw new Error(await res.text());
-      
-      if (res.status === 204) {
-        console.log("Dados carregados com sucesso, sem conteúdo a retornar.");
-        await fetchLaunches();
-        await fetchStatistics();
-        return;
-      }
+      await res.json();
+      // Reload data lists after successful import
+      await fetchLaunches();
+      await fetchStatistics();
     } catch (err) {
       console.error("Erro ao parar e carregar dados:", err);
     }
-  };  
-  
+  };
+
   useEffect(() => {
     fetchLaunches();
     fetchStatistics();
-  }, [API_URL, currentPage]);  const handlePageChange = (event, value) => {
+  }, [fetchLaunches, fetchStatistics]);
+
+  const handlePageChange = (event, value) => {
     setCurrentPage(value);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };

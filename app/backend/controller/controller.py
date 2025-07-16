@@ -4,7 +4,10 @@ from typing import List
 from fastapi import HTTPException
 from model.model import Telemetry, Summary
 from services import telemetry_service
+
+
 from esp import communicator
+
 
 def get_telemetry_by_launch(launch_id: int) -> List[Telemetry]:
     data = telemetry_service.get_telemetries_from_db(launch_id)
@@ -21,11 +24,15 @@ def get_summary_by_launch(launch_id: int) -> Summary:
 
 
 # controllers/telemetry_controller.py
+
+
 def get_all_telemetries() -> List[Telemetry]:
     return telemetry_service.get_all_telemetries()
 
+
 def load_data(path: str) -> Summary:
-    return communicator.insert_full_telemetry(path)
+    return communicator.insert_full_telemetry(path, delete_after=True)
+
 
 def get_all_launches():
     return telemetry_service.get_all_launches()
@@ -46,3 +53,15 @@ def regenerate_data():
 
 def get_general_statistics():
     return telemetry_service.get_general_statistics()
+
+
+# ---------------------------------------------------------------------------
+# Delete launch
+# ---------------------------------------------------------------------------
+
+
+def delete_launch(launch_id: int):
+    telemetry_service.delete_launch(launch_id)
+    return {
+        "message": f"Launch {launch_id} deleted successfully",
+    }
