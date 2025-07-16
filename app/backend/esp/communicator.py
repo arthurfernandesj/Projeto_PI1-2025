@@ -33,7 +33,7 @@ def sync_sequence(session: Session, table: str, sequence: str) -> None:
     """))
 
 
-def insert_full_telemetry(csv_path: str) -> Summary:
+def insert_full_telemetry(csv_path: str) -> None:
     # -----------------------------------------------------------------------
     # 2.1 Carrega CSV e garante tipos corretos
     # -----------------------------------------------------------------------
@@ -100,27 +100,12 @@ def insert_full_telemetry(csv_path: str) -> Summary:
 
         print(f"[OK] Lançamento {launch_id} salvo com {len(df)} pontos de telemetria.")
 
-        os.remove(CSV_PATH)
-        print("[INFO] Arquivo processado e removido com sucesso.")
-
-        return Summary(
-        launch_id=launch_id,
-        avg_altitude=analysis.avg_altitude,
-        max_altitude=analysis.max_altitude,
-        min_altitude=analysis.min_altitude,
-        avg_speed=analysis.avg_speed,
-        max_speed=analysis.max_speed,
-        min_speed=analysis.min_speed,
-        total_duration_seconds=analysis.total_duration_seconds,
-        recorded_points=analysis.recorded_points,
-    )
-
 
 if __name__ == "__main__":
     print("[INFO] Iniciando watcher de telemetria...")
     while True:
         CURRENT_DIR = os.path.dirname(__file__)
-        CSV_PATH = os.path.join(CURRENT_DIR, "dados_gps.csv")
+        CSV_PATH = os.path.join(CURRENT_DIR, "dados_wifi.csv")
         if os.path.exists(CSV_PATH):
             try:
                 print(f"[INFO] CSV encontrado. Processando: {CSV_PATH}")

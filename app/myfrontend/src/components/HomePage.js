@@ -12,55 +12,62 @@ function HomePage() {
   const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
   const pageSize = 9;
 
+  const fetchLaunches = async () => {
+    setLoading(true);
+    try {
+      const endpoint = `${API_URL}/api/launches/?page=${currentPage}&page_size=${pageSize}`;
+      console.log("Fetching launches from:", endpoint);
+      const response = await fetch(endpoint);
+      console.log("Response status:", response.status);
+
+      const data = await response.json();
+      console.log("Received data:", data);
+
+      if (data && data.launches && Array.isArray(data.launches)) {
+        setLaunches(data.launches);
+        setTotalPages(data.total_pages);
+        setTotalCount(data.total_count);
+      } else {
+        console.error("Formato de dados inesperado:", data);
+        setLaunches([]);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar lançamentos:", error);
+      setLaunches([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchStatistics = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/statistics/general`);
+      if (response.ok) {
+        const data = await response.json();
+        setStatistics(data);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar estatísticas:", error);
+    }
+  };
+
   const handleStop = async () => {
     try {
       const res = await fetch(`${API_URL}/api/data/load`);
       if (!res.ok) throw new Error(await res.text());
-      const summary = await res.json();
-      console.log("Resumo recebido:", summary);
+      
+      if (res.status === 204) {
+        console.log("Dados carregados com sucesso, sem conteúdo a retornar.");
+        await fetchLaunches();
+        await fetchStatistics();
+        return;
+      }
     } catch (err) {
       console.error("Erro ao parar e carregar dados:", err);
     }
-  };  useEffect(() => {
-    const fetchLaunches = async () => {
-      setLoading(true);
-      try {
-        const endpoint = `${API_URL}/api/launches/?page=${currentPage}&page_size=${pageSize}`;
-        console.log("Fetching launches from:", endpoint);
-        const response = await fetch(endpoint);
-        console.log("Response status:", response.status);
-
-        const data = await response.json();
-        console.log("Received data:", data);
-
-        if (data && data.launches && Array.isArray(data.launches)) {
-          setLaunches(data.launches);
-          setTotalPages(data.total_pages);
-          setTotalCount(data.total_count);
-        } else {
-          console.error("Formato de dados inesperado:", data);
-          setLaunches([]);
-        }
-      } catch (error) {
-        console.error("Erro ao buscar lançamentos:", error);
-        setLaunches([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const fetchStatistics = async () => {
-      try {
-        const response = await fetch(`${API_URL}/api/statistics/general`);
-        if (response.ok) {
-          const data = await response.json();
-          setStatistics(data);
-        }
-      } catch (error) {
-        console.error("Erro ao buscar estatísticas:", error);
-      }
-    };
-
+  };  
+  
+  useEffect(() => {
     fetchLaunches();
     fetchStatistics();
   }, [API_URL, currentPage]);  const handlePageChange = (event, value) => {

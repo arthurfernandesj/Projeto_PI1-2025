@@ -1,8 +1,9 @@
-from fastapi import HTTPException, APIRouter, Query
+from fastapi import HTTPException, APIRouter, Query, status, Response
 from typing import List
 from model.model import Telemetry, Summary, Launch, LaunchesResponse
 from controller import controller
 import httpx
+from pathlib import Path
 
 router = APIRouter()
 
@@ -14,7 +15,7 @@ async def get_launches(
 ):
     return controller.get_launches_paginated(page, page_size)
 
-@router.get("/api/data/load", response_model=Summary)
+@router.get("/api/data/load", status_code=status.HTTP_204_NO_CONTENT)
 async def load_csv_data():
     print("Iniciando requisição para ESP...")
 
@@ -38,7 +39,7 @@ async def load_csv_data():
             raise HTTPException(500, f"Falha ao carregar dados: {e}")
     
         print("Dados carregados com sucesso.")
-        return summary
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @router.get("/api/telemetry/launchs/", response_model=List[Telemetry])
