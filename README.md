@@ -69,22 +69,22 @@ Este projeto está licenciado sob os termos do arquivo `LICENSE`.
 
 ## :busts_in_silhouette: Equipe
 
-|    Função    | Nome                                 | LinkedIn | GitHub |
-| :----------: | :----------------------------------- | :------: | :----: |
-|   Geral      | Arthur Fernandes Silva de Jesus      | [LinkedIn](https://www.linkedin.com/in/arthur-fernandes-dev/) |[GitHub](https://github.com/arthurfernandesj) |
-|   Energia    | Bruno Cruz Garcia Rosa               |    -     |   -    |
-|   Software   | Camila Silva Cavalcante              |    -     |   -    |
-|   Software   | Eric Silveira Gomes                  |    -     |   -    |
-|   Software   | Geovanna Alves Umbelino              |    -     |   -    |
-| Estrutura    | Gustavo Moreira Neris                |    -     |   -    |
-| Eletrônica   | Isabella Mendes Choukaira            | [LinkedIn](https://www.linkedin.com/in/isabella-choukaira-21b109360) |[GitHub](https://github.com/isabellachoukaira) |
-| Software     | Lucas Borges Branco                  |    -     |   -    |
-| Eletrônica   | Maria Clara Canuto Gontijo           |    -     |   -    |
-| Eletrônica   | Milena Marques Simões de Oliveira    |    -     |   -    |
-|   Energia    | Noemy da Luz Cardoso                 |    -     |   -    |
-| Estrutura    | Octávio Silva Ribeiro Cunha          |    -     |   -    |
-| Estrutura    | Pedro Henrique Valeriano Carneiro    |    -     |   -    |
-| Software     | Renan dos Satos Ribeiro              |    -     |   -    |
-| Software     | Ricardo Augusto Valle Maciel         |    -     |   -    |
-| Estrutura    | Tatyara Gonçalves Cardoso            |    -     |   -    |
-| Eletrônica   | Yasmin Moreira do Nascimento         | [LinkedIn](https://www.linkedin.com/in/yasmin-nascimento-b82400352/) | [GitHub](https://github.com/Yasm1nNasc1mento) |
+|    Função    | Nome                                 |
+| :----------: | :----------------------------------- |
+|   Geral      | Arthur Fernandes Silva de Jesus      |
+|   Energia    | Bruno Cruz Garcia Rosa               |
+|   Software   | Camila Silva Cavalcante              |
+|   Software   | Eric Silveira Gomes                  |
+|   Software   | Geovanna Alves Umbelino              |
+| Estrutura    | Gustavo Moreira Neris                |
+| Eletrônica   | Isabella Mendes Choukaira            |
+| Software     | Lucas Borges Branco                  |
+| Eletrônica   | Maria Clara Canuto Gontijo           |
+| Eletrônica   | Milena Marques Simões de Oliveira    |
+|   Energia    | Noemy da Luz Cardoso                 |
+| Estrutura    | Octávio Silva Ribeiro Cunha          |
+| Estrutura    | Pedro Henrique Valeriano Carneiro    |
+| Software     | Renan dos Satos Ribeiro              |
+| Software     | Ricardo Augusto Valle Maciel         |
+| Estrutura    | Tatyara Gonçalves Cardoso            |
+| Eletrônica   | Yasmin Moreira do Nascimento         |
